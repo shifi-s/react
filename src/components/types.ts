@@ -1,11 +1,10 @@
 export type User = {
+    id:number
     name: string,
-    password: string,
-    address: string,
-    phone: string
+
 }
 export type Action = {
-    data: User,
+    data: User, 
     type: 'update' | 'get' | 'create'
 }
 export type Context = {
@@ -15,19 +14,16 @@ export type Context = {
 export function userReducer(state: User, data: Action): User {
     switch (data.type) {
         case 'create':
-            const { name, password } = data.data as Partial<User>
+            const { id,name} = data.data as User
             return {
-                name: name || ' ',
-                password: password || ' ',
-                address: '',
-                phone: ''
+                id:id,
+                name: name
             }
         case 'update':
             return {
-                name: data.data.name,
-                password: data.data.password,
-                address: data.data.address || state.address,
-                phone: data.data.address || state.phone
+                id:data.data.id,
+                name: data.data.name||state.name
+                
             }
         default:
             return state

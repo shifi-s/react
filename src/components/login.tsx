@@ -1,6 +1,8 @@
 import { Box, Button, Modal, TextField } from "@mui/material";
-import { useContext, useRef, useState } from "react";
+import {  useContext, useRef, useState } from "react";
 import { context } from "./home";
+import axios from "axios";
+
 
 const style = {
     bgcolor: 'white',
@@ -12,30 +14,53 @@ const style = {
     border: '3px solid black',
     padding:'30px'
 }
-const Login = ({ IsConnected }: { IsConnected: Function }) => {
-
-    const nameRef = useRef<HTMLInputElement>(null)
+const Login = ({ IsConnected}: { IsConnected: Function }) => {
     const passwordRef = useRef<HTMLInputElement>(null)
+    const emailRef = useRef<HTMLInputElement>(null)
     const [isLogIn, setIsLogIn] = useState(false)
-
+    const url = 'http://localhost:3000/api/user'
     const userContext = useContext(context)
-    const handleSubmit = () => {
-        if (nameRef.current?.value == userContext?.user.name && passwordRef.current?.value == userContext?.user.password) {
-            userContext?.userDispatch({ type: 'create', data: { name: nameRef.current?.value || '', password: passwordRef.current?.value || '' } })
-            IsConnected()
-        }
-        else alert("username or password are wrong")
-    }
-    return (<>
-        {!isLogIn ?
-            <Button color="primary" variant="contained" style={{backgroundColor:'black',width:'100px',height:'50px'}} onClick={() => setIsLogIn(true)}>login</Button> :
-            <Modal open={isLogIn}><Box sx={style} >
-                <TextField inputRef={nameRef} placeholder="name"  />
-                <TextField type="password" inputRef={passwordRef} placeholder="password" />
-                <Button variant="contained" sx={{ bgcolor: 'black',color:'white',margin:'10px' }} onClick={() => handleSubmit()}>login</Button> </Box>
-            </Modal>}
+    const handleSubmitLogin = async(e:React.FormEvent)=>{
+      console.log(userContext?.user.name)
+          e.preventDefault()
 
-    </>
-    )
-}
+          
+          try{
+            const res=await axios.post(url + '/login',{ 
+                    email: emailRef.current?.value,
+                    password: passwordRef.current?.value
+                })
+                if(res.status===401)
+                alert("user is not found");
+                else
+               { 
+               
+                userContext?.userDispatch({ type: 'create', data:{id:res.data.userId,name:res.data.userName } })
+                IsConnected()
+                
+               }
+                
+          } 
+          catch(e)
+          {
+               console.log(e);
+               
+          }
+
+    }
+    
+    return (<>
+        {!isLogIn &&<Button color="primary" variant="contained" style={{backgroundColor:'black',width:'100px',height:'50px'}} onClick={() => setIsLogIn(true)}>login</Button>} 
+           {isLogIn&& <Modal open={isLogIn}><Box sx={style} >
+            <form onSubmit={handleSubmitLogin}>
+                <TextField type="email" inputRef={emailRef} placeholder="email"  />
+                <TextField type="password" inputRef={passwordRef} placeholder="password" />
+        <Button type="submit">login</Button>
+            </form >
+            </Box>
+            </Modal>}
+            
+    </>)
+    }
+
 export default Login;
