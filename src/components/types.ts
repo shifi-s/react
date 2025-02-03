@@ -11,6 +11,16 @@ export type Context = {
     user: User,
     userDispatch: React.Dispatch<any>
 }
+export type Recipe=
+{
+    id?: number,
+    title?: string,
+    description?: string,
+    authorId?: number,
+    ingredients?:string[],
+    instructions?: string
+    
+}
 export function userReducer(state: User, data: Action): User {
     switch (data.type) {
         case 'create':

@@ -1,8 +1,8 @@
-import { Box, Button, Modal, TextField } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Modal, Snackbar, TextField } from "@mui/material";
 import {  useContext, useRef, useState } from "react";
-import { context } from "./home";
-import axios from "axios";
 
+import axios from "axios";
+import { context } from "./AppLayOut";
 
 const style = {
     bgcolor: 'white',
@@ -14,7 +14,9 @@ const style = {
     border: '3px solid black',
     padding:'30px'
 }
+
 const Login = ({ IsConnected}: { IsConnected: Function }) => {
+    const[error,setError]=useState(false)
     const passwordRef = useRef<HTMLInputElement>(null)
     const emailRef = useRef<HTMLInputElement>(null)
     const [isLogIn, setIsLogIn] = useState(false)
@@ -22,44 +24,44 @@ const Login = ({ IsConnected}: { IsConnected: Function }) => {
     const userContext = useContext(context)
     const handleSubmitLogin = async(e:React.FormEvent)=>{
       console.log(userContext?.user.name)
-          e.preventDefault()
-
-          
+          e.preventDefault() 
           try{
             const res=await axios.post(url + '/login',{ 
                     email: emailRef.current?.value,
                     password: passwordRef.current?.value
                 })
-                if(res.status===401)
-                alert("user is not found");
-                else
-               { 
-               
                 userContext?.userDispatch({ type: 'create', data:{id:res.data.userId,name:res.data.userName } })
                 IsConnected()
-                
-               }
-                
           } 
-          catch(e)
+          catch(e:any)
           {
-               console.log(e);
-               
+            if(e.status===401)
+               setError(true)
           }
 
     }
     
     return (<>
-        {!isLogIn &&<Button color="primary" variant="contained" style={{backgroundColor:'black',width:'100px',height:'50px'}} onClick={() => setIsLogIn(true)}>login</Button>} 
+        {!isLogIn &&<Button color="primary" variant="contained" style={{backgroundColor:'black',width:'90px',height:'40px'}} onClick={() => setIsLogIn(true)}>login</Button>} 
            {isLogIn&& <Modal open={isLogIn}><Box sx={style} >
             <form onSubmit={handleSubmitLogin}>
-                <TextField type="email" inputRef={emailRef} placeholder="email"  />
-                <TextField type="password" inputRef={passwordRef} placeholder="password" />
+                <TextField label={"email"} type="email" inputRef={emailRef} aria-label="email"  fullWidth/>
+                <TextField label={"password"} type="password" inputRef={passwordRef} fullWidth area-label="password" />
         <Button type="submit">login</Button>
             </form >
             </Box>
             </Modal>}
-            
+           <Snackbar open={error} 
+           onClose={()=>setError(false)}
+           anchorOrigin={{ vertical: "top", horizontal: "center" }} >
+            <Alert
+            onClose={()=>setError(false)}
+          severity="error" 
+          sx={{ width: "100%" }}>
+            <AlertTitle >error</AlertTitle>
+            user not found: email or password ar not correct
+            </Alert>
+           </Snackbar>      
     </>)
     }
 

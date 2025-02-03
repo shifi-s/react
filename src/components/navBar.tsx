@@ -1,19 +1,18 @@
-import { Link } from "react-router";
-import HomePage from "./home";
-import { NavLink } from "react-router";
-import { fontGrid } from "@mui/material/styles/cssUtils";
 
-const navBar=()=>
+import { NavLink } from "react-router";
+
+const NavBar=()=>
 {
     return (<>
    <nav> 
    <div style={{ position: "absolute", top: "10px", right: "10px" ,fontSize:"20px"}}>
-  <Link to="/about" style={{ fontWeight: "bold" ,margin:" 0 10px", color:"black"}}>About</Link> | 
-  <Link to="/homePage" style={{ fontWeight: "bold",margin:" 0 10px",color:"black" }}>Home</Link>
+  <NavLink to="/home" style={({isActive})=>({
+      color:isActive?'orange':'black',fontWeight: "bold" ,margin:" 0 10px"
+    })}>Home</NavLink> | 
+  <NavLink to="/recipes" style={({isActive})=>({ fontWeight: "bold",margin:" 0 10px",color:isActive?'orange':'black' })}>Our Recipes</NavLink>
 </div>
-    { <NavLink to='/rer'/> }
    </nav>
     </>)
 
 }
-export default navBar;
+export default NavBar;

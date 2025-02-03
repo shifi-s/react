@@ -1,18 +1,20 @@
 import { useContext, useRef, useState } from "react"
-import { context } from "./home"
+
 import axios from "axios"
-import { Modal, Box, TextField, Button } from "@mui/material"
+import { Modal, Box, TextField, Button, Alert, Snackbar, AlertTitle } from "@mui/material"
+import { context } from "./AppLayOut"
 
 const Signin = ({ IsConnected}: { IsConnected: Function }) => {
-    const nameRef = useRef<HTMLInputElement>(null)
-        const passwordRef = useRef<HTMLInputElement>(null)
-        const emailRef = useRef<HTMLInputElement>(null)
-        const phoneRef = useRef<HTMLInputElement>(null)
-        const addressRef = useRef<HTMLInputElement>(null)
-        const [isSignIn, setSignIn] = useState(false)
-        const url = 'http://localhost:3000/api/user'
-        const userContext = useContext(context)
-        const style = {
+const [error,setError]=useState(false)
+const nameRef = useRef<HTMLInputElement>(null)
+const passwordRef = useRef<HTMLInputElement>(null)
+const emailRef = useRef<HTMLInputElement>(null)
+const phoneRef = useRef<HTMLInputElement>(null)
+const addressRef = useRef<HTMLInputElement>(null)
+const [isSignIn, setSignIn] = useState(false)
+const url = 'http://localhost:3000/api/user'
+const userContext = useContext(context)
+const style = {
             bgcolor: 'white',
             position: 'absolute',
             top: '50%',
@@ -22,8 +24,7 @@ const Signin = ({ IsConnected}: { IsConnected: Function }) => {
             border: '3px solid black',
             padding:'30px'
         }
-
-        const handleSubmitSignIn = async(e:React.FormEvent)=>{
+const handleSubmitSignIn = async(e:React.FormEvent)=>{
             e.preventDefault()
             try{
               const res=await axios.post(url + '/register',{ 
@@ -36,30 +37,38 @@ const Signin = ({ IsConnected}: { IsConnected: Function }) => {
               })
              userContext?.userDispatch({ type: 'create', data: {id:res.data.userId, name: nameRef.current?.value ,email:emailRef.current?.value, password: passwordRef.current?.value  ,address:addressRef.current?.value,phone:phoneRef.current?.value} })
                     IsConnected()
-                    
-    
             } 
-            catch(e)
+            catch(e:any)
             {
-    
-            }
+              if(e.status===422)
+              setError(true)
+          }
     
       }
     return(<>
-    {!isSignIn&&<Button color="primary" variant="contained" style={{backgroundColor:'black',width:'100px',height:'50px'}} onClick={() => setSignIn(true)}>sign in</Button>}
+    {!isSignIn&&<Button color="primary" variant="contained" style={{backgroundColor:'black',width:'90px',height:'40px'}} onClick={() => setSignIn(true)}>sign in</Button>}
     {isSignIn&&<Modal open={isSignIn}><Box sx={style} >
              <form onSubmit={handleSubmitSignIn}><TextField inputRef={nameRef} required placeholder="name"  /> 
-             <TextField type="password" required inputRef={passwordRef} placeholder="password" />
-             <TextField type="email" required inputRef={emailRef} placeholder="email" />
-             <TextField  inputRef={addressRef} placeholder="address" />
-             <TextField inputRef={phoneRef} placeholder="phone" />
+             <TextField type="password" required inputRef={passwordRef} label={"password"} area-label="password" />
+             <TextField type="email" required inputRef={emailRef} label={"email"} area-label="email" />
+             <TextField  inputRef={addressRef} label={"address"} area-label="address" />
+             <TextField inputRef={phoneRef} label={"phone"} area-label="phone" />
              <Button type="submit">sign in</Button>
                </form>
-
                </Box>
                </Modal>
             }
-    
+                 <Snackbar open={error} 
+           onClose={()=>setError(false)}
+           anchorOrigin={{ vertical: "top", horizontal: "center" }} >
+            <Alert
+            onClose={()=>setError(false)}
+          severity="error" 
+          sx={{ width: "100%" }}>
+             <AlertTitle >error</AlertTitle>
+     can not sign in : user is already exist            
+</Alert>
+           </Snackbar>   
     </>)
 }
 export default Signin

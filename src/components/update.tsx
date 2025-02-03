@@ -1,5 +1,5 @@
 import { useContext, useRef } from "react"
-import { context } from "./home"
+import { context } from "./AppLayOut"
 import { Box, Button, Modal, TextField } from "@mui/material"
 import axios from "axios"
 
@@ -10,15 +10,16 @@ const Update = ({ toUpdate }: { toUpdate: Function }) => {
     const addressRef = useRef<HTMLInputElement>(null)
     const phoneRef = useRef<HTMLInputElement>(null)
     const userContext = useContext(context)
-
-
+    
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()        
-        const res = await axios.put("http://localhost:3000/api/user/", { name: nameRef.current?.value || userContext?.user.name, password: passwordRef.current?.value , email:emailRef.current?.value,address: addressRef.current?.value , phone: phoneRef.current?.value  }, { headers: { 'user-id': userContext?.user.id } })
-
-        if (res.status != 404 && res.status != 403) {
+        e.preventDefault()    
+        try{    
+       await axios.put("http://localhost:3000/api/user/", { name: nameRef.current?.value || userContext?.user.name, password: passwordRef.current?.value , email:emailRef.current?.value,address: addressRef.current?.value , phone: phoneRef.current?.value  }, { headers: { 'user-id': userContext?.user.id } })
             userContext?.userDispatch({ type: 'update', data: { id: userContext.user.id, name: nameRef.current?.value} })
             toUpdate()
+        }
+        catch(e){
+            alert('something wrong...')
         }
     }
     return (<>
