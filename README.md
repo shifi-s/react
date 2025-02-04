@@ -49,3 +49,5 @@ export default tseslint.config({
 })
 ```
 "# react" 
+
+בעקרון לא נראה לי שעשיתי שינויים בשרת רק שיניתי את firstName של המורה ל name  מקווה שיעבוד...

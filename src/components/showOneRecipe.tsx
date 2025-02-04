@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useParams } from "react-router";
 import recipesStore from "./recipesStore";
-import { Divider, ListItem, ListItemText, Typography, Paper, Box } from "@mui/material";
+import { Divider, ListItem, ListItemText, Typography, Paper, Box, TextField } from "@mui/material";
 
 const ShowOneRecipe = observer(() => {
   const { id } = useParams();

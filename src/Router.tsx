@@ -6,13 +6,13 @@ import Home from "./components/home";
 
 
 
-const MyRouter=createBrowserRouter([{
+const MyRouter = createBrowserRouter([{
 
     path: '/',
-    element: <AppLayOut/>,
+    element: <AppLayOut />,
     children: [
-    { path: 'home', element: <Home /> },
-    {path:'recipes',element:<ShowRecipes/>, children :[{path:':id',element: <ShowOneRecipe/>}]}
+        { path: 'home', element: <Home /> },
+        { path: 'recipes', element: <ShowRecipes />, children: [{ path: ':id', element: <ShowOneRecipe /> }] }
     ]
 }])
 

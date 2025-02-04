@@ -3,7 +3,7 @@ const Home = () => {
         <div style={{ position: "relative", width: "100%", minHeight: "100vh" }}>
             Recipes
             <div style={{ fontSize: "30px", position: "relative", textAlign: "center", paddingTop: "20px" }}>
-               welcome!
+                welcome!
             </div>
         </div>
     );
